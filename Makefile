@@ -1,5 +1,5 @@
-RELEASE 	:= p4-es
-NAMESPACE	:= default
+RELEASE 	?= p4-es
+NAMESPACE	?= default
 
 .DEFAULT_GOAL := deploy
 
