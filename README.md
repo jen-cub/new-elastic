@@ -1,9 +1,9 @@
 # Planet-4 Helm chart Elastic Search configuration
 
 ## Ingredients:
--   a running Kubernetes cluster
--   helm tiller initialised
+-   kubectl [https://kubernetes.io/docs/tasks/tools/install-kubectl/](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 -   helm client [https://docs.helm.sh/using_helm/](https://docs.helm.sh/using_helm/)
+-   an accessible Kubernetes cluster running Helm Tiller
 
 ## Preparation:
 
