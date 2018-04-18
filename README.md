@@ -15,7 +15,7 @@ RELEASE=<my-release> NAMESPACE=<my-namespace> make
 
 To access Elasticsearch from within your cluster, use:
 
-`$RELEASE-elasticsearch-client.default.svc.cluster.local:9200`
+`$RELEASE-elasticsearch-client.$NAMESPACE.svc.cluster.local:9200`
 
 To connect from outside the cluster:
 
