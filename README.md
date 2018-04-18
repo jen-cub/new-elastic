@@ -7,26 +7,21 @@ Ingredients:
 
 Preparation:
 ```
-ES-RELEASE=<my-release>
-helm upgrade --install $ES-RELEASE -f values.yaml incubator/elasticsearch
+RELEASE=<my-release> make
 ```
 
 Cooking:
 
-Access the ES instance from within your cluster, at the following DNS name at port 9200:
+To access the ES instance from within your cluster, use:
 
-`$ES-RELEASE-elasticsearch-client.default.svc.cluster.local`
+`$RELEASE-elasticsearch-client.default.svc.cluster.local:9200`
 
-From outside the cluster, run these commands in the same shell:
+To connect from outside the cluster:
 ```
-export POD_NAME=$(kubectl get pods --namespace default -l "app=elasticsearch,component=client,release=$ES-RELEASE" -o jsonpath="{.items[0].metadata.name}")
-echo "Visit http://127.0.0.1:9200 to use Elasticsearch"
-kubectl port-forward --namespace default $POD_NAME 9200:9200
+make port &
 ```
 
-Cleaning up: remember to delete any unwanted storage:
+Cleaning up:
 ```
-helm delete $ES-RELEASE
-kubectl delete pvc -l release=$ES-RELEASE,component=data
-kubectl delete pvc -l release=$ES-RELEASE,component=master
+make clean
 ```
