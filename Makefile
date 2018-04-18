@@ -14,8 +14,8 @@ clean:
 	kubectl delete statefulset $(RELEASE)-es-elasticsearch-data -n $(NAMESPACE)
 
 port:
-	kubectl port-forward --namespace $(NAMESPACE) $(shell kubectl get pods --namespace default -l "app=elasticsearch,component=client,release=$(RELEASE)" -o jsonpath="{.items[0].metadata.name}") 9200:9200
 	@echo "Visit http://127.0.0.1:9200 to use Elasticsearch"
+	kubectl port-forward --namespace $(NAMESPACE) $(shell kubectl get pods --namespace default -l "app=elasticsearch,component=client,release=$(RELEASE)" -o jsonpath="{.items[0].metadata.name}") 9200:9200
 
 status:
 	helm status $(RELEASE)
