@@ -11,7 +11,7 @@
 RELEASE=<my-release> NAMESPACE=<my-namespace> make
 ```
 
-## Cooking:
+## Dining:
 
 To access Elasticsearch from within your cluster, use:
 
