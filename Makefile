@@ -7,7 +7,7 @@ CHART ?= stable/elasticsearch
 
 .PHONY: clean deploy
 
-all: clean deploy
+all: deploy
 
 clean:
 	helm delete $(RELEASE) --purge
