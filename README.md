@@ -1,15 +1,17 @@
 # Planet-4 Helm chart Elastic Search configuration
 
-## Ingredients:
--   kubectl [https://kubernetes.io/docs/tasks/tools/install-kubectl/](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
--   helm client [https://docs.helm.sh/using_helm/](https://docs.helm.sh/using_helm/)
--   an accessible Kubernetes cluster running Helm Tiller
+Currently using a deprecated chart in stable/elasticsearch
 
-## Preparation:
+***
+NOT INTENDED TO BE DEPLOYED BY HAND
+***
 
-```
-RELEASE=<my-release> NAMESPACE=<my-namespace> make
-```
+This repository is intended to be used via [CircleCI](https://circleci.com/gh/greenpeace/planet4-traefik)
+
+Commits to the develop branch affect the development cluster, commits to the master branch affect the production cluster.
+
+---
+
 
 ## Dining:
 
@@ -24,8 +26,8 @@ make port &
 curl http://localhost:9200/_cat/health
 ```
 
-## Cleaning up:
+## Destroying:
 
 ```
-make clean
+make destroy
 ```
