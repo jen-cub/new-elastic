@@ -1,6 +1,6 @@
 ---
 data:
-  heapSize: "2Gi"
+  heapSize: "2048m"
   resources:
     limits:
       cpu: "1"
