@@ -7,4 +7,4 @@ data:
       memory: "8Gi"
     requests:
       cpu: "25m"
-      memory: "8Gi"
+      memory: "4Gi"
