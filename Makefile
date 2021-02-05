@@ -1,16 +1,14 @@
-RELEASE 	?= p4-es
+RELEASE-CLIENT 	?= just-es-client
+RELEASE-DATA 	?= just-es-data
+RELEASE-MASTER 	?= just-es
 NAMESPACE	?= default
 
-CHART_NAME ?= stable/elasticsearch
-CHART_VERSION ?= 1.32.4
+CHART_NAME ?= elastic/elasticsearch
+CHART_VERSION ?= 7.10.2
 
-DEV_CLUSTER ?= p4-development
-DEV_PROJECT ?= planet-4-151612
-DEV_ZONE ?= us-central1-a
-
-PROD_CLUSTER ?= planet4-production
-PROD_PROJECT ?= planet4-production
-PROD_ZONE ?= us-central1-a
+DEV_CLUSTER ?= testrc
+DEV_PROJECT ?= jendevops1
+DEV_ZONE ?= australia-southeast1-c
 
 .DEFAULT_TARGET := status
 
@@ -19,33 +17,68 @@ PROD_ZONE ?= us-central1-a
 all: deploy
 
 lint:
-	@find . -type f -name '*.yml' | xargs yamllint
-	@find . -type f -name '*.yaml' | xargs yamllint
+ifdef YAMLLINT
+	@find . -type f -name '*.yml' | xargs $(YAMLLINT)
+	@find . -type f -name '*.yaml' | xargs $(YAMLLINT)
+else
+	$(warning "WARNING :: yamllint is not installed: https://github.com/adrienverge/yamllint")
+endif
+
 
 init:
-	helm init --client-only
-	helm repo update
+	helm3 repo add elastic https://helm.elastic.co
+	helm3 repo update
 
 port:
 	@echo "Visit http://127.0.0.1:9200 to use Elasticsearch"
-	kubectl port-forward --namespace $(NAMESPACE) $(shell kubectl get service --namespace $(NAMESPACE) -l "app=elasticsearch,component=client,release=$(RELEASE)" -o name) 9200:9200
+	kubectl port-forward --namespace $(NAMESPACE) service/elasticsearch-client 9200:9200
 
 status:
 	helm status $(RELEASE)
 
-dev: lint init
-ifndef CI
-	$(error Please commit and push, this is intended to be run in a CI environment)
-endif
+dev: lint init dev-client dev-data dev-master
+
+dev-client:
 	gcloud config set project $(DEV_PROJECT)
 	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
-	helm upgrade --install --force --wait $(RELEASE) \
+	helm3 upgrade --install --wait $(RELEASE-CLIENT) \
 		--namespace=$(NAMESPACE) \
 		--version $(CHART_VERSION) \
 		-f values.yaml \
+		-f values-client.yaml \
 		-f env/dev/values.yaml \
 		$(CHART_NAME)
 	$(MAKE) history
+
+dev-data:
+	gcloud config set project $(DEV_PROJECT)
+	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
+	helm3 upgrade --install --wait $(RELEASE-DATA) \
+		--namespace=$(NAMESPACE) \
+		--version $(CHART_VERSION) \
+		-f values.yaml \
+		-f values-data.yaml \
+		-f env/dev/values.yaml \
+		$(CHART_NAME)
+	$(MAKE) history
+
+dev-master:
+	gcloud config set project $(DEV_PROJECT)
+	gcloud container clusters get-credentials $(DEV_CLUSTER) --zone $(DEV_ZONE) --project $(DEV_PROJECT)
+	helm3 upgrade --install --wait $(RELEASE) \
+		--namespace=$(NAMESPACE) \
+		--version $(CHART_VERSION) \
+		-f values.yaml \
+		-f values-master.yaml \
+		-f env/dev/values.yaml \
+		$(CHART_NAME)
+	$(MAKE) history
+
+
+
+
+
+
 
 prod: lint init
 ifndef CI
@@ -64,7 +97,7 @@ endif
 
 
 history:
-	helm history $(RELEASE) --max=5
+	helm3 history $(RELEASE) -n $(NAMESPACE) --max=5
 
 
 destroy:

@@ -1,0 +1,26 @@
+---
+clusterName: "elasticsearch"
+nodeGroup: "data"
+
+roles:
+  master: "false"
+  ingest: "true"
+  data: "true"
+  ml: "false"
+  remote_cluster_client: "false"
+
+data:
+  esJavaOpts: "-Xmx900g -Xms900g"
+  resources:
+    requests:
+      cpu: "900m"
+      memory: "2Gi"
+    limits:
+      cpu: "900m"
+      memory: "2Gi"
+
+rbac:
+  create: true
+
+volumeClaimTemplate:
+  storageClassName: "standard"
